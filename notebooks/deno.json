@@ -1,0 +1,12 @@
+{
+  "nodeModulesDir": "auto",
+  "imports": {
+    "@earendil-works/pi-ai": "npm:@earendil-works/pi-ai@^0.80.3",
+    "@earendil-works/pi-ai/": "npm:/@earendil-works/pi-ai@^0.80.3/",
+    "playground/env": "./env.ts"
+  },
+  "allowScripts": {
+    "allow": [],
+    "deny": ["npm:@google/genai@1.52.0", "npm:protobufjs@7.6.4"]
+  }
+}
