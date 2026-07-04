@@ -19,59 +19,90 @@ so it runs pi.dev out of the box while staying a TS/JS (non-Python) notebook.
 
 ## Layout
 
+Everything the notebooks need lives in `notebooks/` (so the Deno kernel — whose working
+directory is the notebook's folder — always finds `deno.json`):
+
 ```
 notebooks/
   00-hello-typescript.ipynb   # simplest check: TypeScript runs in a notebook
   01-hello-world.ipynb        # one LLM round-trip via pi-ai (Anthropic → Haiku)
-env.ts                        # walk-up .env loader (see below)
-deno.json                     # import map + npm deps for Deno
+  env.ts                      # walk-up .env loader
+  deno.json                   # import map + npm deps for Deno
+  deno.lock                   # pinned dependency lockfile (committed)
+  .env.example                # which API keys are supported
 ```
 
-## Setup
+---
 
-### 1. Install Deno + register its Jupyter kernel
+## Setup on a new computer (after a fresh clone)
+
+### 1. Install the prerequisites
 
 ```bash
-brew install deno            # or: curl -fsSL https://deno.land/install.sh | sh
+# Deno (the runtime + Jupyter kernel)
+brew install deno                    # or: curl -fsSL https://deno.land/install.sh | sh
+
+# A Jupyter front-end. Either:
+#   (a) JupyterLab in the browser:
+pip3 install jupyterlab
+#   (b) or just use VS Code with the "Jupyter" extension installed.
+```
+
+### 2. Register the Deno Jupyter kernel
+
+```bash
 deno jupyter --install
+jupyter kernelspec list              # should list "deno"
 ```
 
-### 2. Install Jupyter
+### 3. Cache the dependencies
 
 ```bash
-pip3 install jupyterlab      # any Jupyter front-end works
-jupyter kernelspec list      # should list "deno"
+cd notebooks
+deno install                         # reads deno.json / deno.lock, populates node_modules/
 ```
 
-### 3. Cache the npm dependencies
+### 4. Add your API key — in a `.env` OUTSIDE the repo
+
+Keep your key on disk but **outside the git folder** so it can never be committed.
+Create a `.env` in a parent directory (see `notebooks/.env.example` for supported keys):
 
 ```bash
-deno install                 # reads deno.json, populates node_modules/
-```
-
-### 4. Provide a provider API key — outside the repo
-
-pi resolves credentials from environment variables. Keep your key **on disk but outside
-the git repo** so it can never be committed. Create a `.env` in a parent directory:
-
-```bash
-# e.g. one level above this repo:  ../.env
+# e.g. one directory above the repo:  ../.env
 ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-The notebooks call `loadEnvUp()` (from `env.ts`), which **walks up the directory tree**
-from the current folder, finds the first `.env`, and imports its variables into the
-session. See `.env.example` for the supported keys. Anthropic uses **Haiku**
-(`claude-haiku-4-5`) in `01-hello-world.ipynb`; swap in OpenAI/Google by adding a key.
+Cell 1 of each notebook calls `loadEnvUp()` (from `env.ts`), which **walks up the
+directory tree** from the notebook folder, finds the first `.env`, and loads its
+variables into the session. Anthropic uses **Haiku** (`claude-haiku-4-5`) in
+`01-hello-world.ipynb`; add `OPENAI_API_KEY` or `GEMINI_API_KEY` to use another provider.
 
-### 5. Launch (from the repo root)
+### 5. Open a notebook and select the **Deno** kernel
+
+**JupyterLab:**
 
 ```bash
+cd notebooks
 jupyter lab
 ```
 
-Open a notebook, ensure the kernel is **Deno**, and run the cells. Launch from the repo
-root so the `playground/env` import alias (defined in `deno.json`) resolves.
+Open a notebook, and in the top-right kernel picker choose **Deno**.
+
+**VS Code:**
+
+1. Open `notebooks/01-hello-world.ipynb`.
+2. Click the kernel picker (top-right) → **Select Another Kernel…** → **Jupyter Kernel…** → **Deno**.
+3. Run the cells.
+
+> ⚠️ **Do not pick "TypeScript" (tslab).** It's a CommonJS kernel and cannot load pi.dev;
+> it fails with `Cannot find module` / `Unexpected pending rebuildTimer` and also
+> re-saves the wrong kernel into the notebook file. Always choose **Deno**.
+>
+> If the **Deno** kernel isn't listed in VS Code, it was installed while VS Code was
+> running: `Cmd/Ctrl+Shift+P` → **Developer: Reload Window** (and if needed
+> **Jupyter: Clear Kernel Cache**, then reload again).
+
+---
 
 ## Notes
 
@@ -79,3 +110,4 @@ root so the `playground/env` import alias (defined in `deno.json`) resolves.
   `{ override: true }` to `loadEnvUp` if you want it to).
 - Keys are only ever read from a `.env` / the environment — never write them into a cell.
 - `.env` is git-ignored; only `.env.example` is committed.
+- Re-run `deno install` in `notebooks/` whenever `deno.json` changes.
