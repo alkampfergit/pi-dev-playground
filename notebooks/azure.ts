@@ -50,6 +50,12 @@ export interface RegisterAzureOptions {
    */
   models?: MutableModels;
   /**
+   * Deployment name(s) to register, overriding `AZURE_PI_TEST_DEPLOYMENT`.
+   * Pass e.g. `[Deno.env.get("AZURE_PI_TEST_DEPLOYMENT2")!]` to target a
+   * different Azure deployment (like a coding-capable model).
+   */
+  deployments?: string[];
+  /**
    * Per-model capability overrides merged into every registered deployment.
    * Handy when a notebook needs, say, `reasoning: true` or a different
    * `contextWindow`/`maxTokens` than the defaults below.
@@ -77,15 +83,16 @@ export function registerAzure(options: RegisterAzureOptions = {}): AzureSetup {
 
   const rawEndpoint = Deno.env.get("AZURE_PI_TEST_ENDPOINT");
   const azureApiKey = Deno.env.get("AZURE_PI_TEST_API_KEY");
-  const deployments = (Deno.env.get("AZURE_PI_TEST_DEPLOYMENT") ?? "")
-    .split(/[,\s]+/)
+  const deployments = (options.deployments ??
+    (Deno.env.get("AZURE_PI_TEST_DEPLOYMENT") ?? "").split(/[,\s]+/))
     .map((s) => s.trim())
     .filter(Boolean);
 
   if (!rawEndpoint || !azureApiKey || deployments.length === 0) {
     throw new Error(
       "Missing Azure config. Set AZURE_PI_TEST_ENDPOINT, AZURE_PI_TEST_API_KEY, " +
-        "and AZURE_PI_TEST_DEPLOYMENT in a .env, then re-run the loadEnvUp() cell.",
+        "and AZURE_PI_TEST_DEPLOYMENT (or pass options.deployments) in a .env, " +
+        "then re-run the loadEnvUp() cell.",
     );
   }
 

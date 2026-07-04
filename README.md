@@ -24,28 +24,32 @@ directory is the notebook's folder — always finds `deno.json`):
 
 ```
 notebooks/
-  00-hello-typescript.ipynb        # simplest check: TypeScript runs in a notebook
-  01-hello-world.ipynb             # one LLM round-trip via pi-ai (Azure OpenAI)
-  02-streaming.ipynb               # streamSimple + iterating the event stream
-  03-multi-turn-chat.ipynb         # managing Context.messages history + running cost
-  04-tool-calling.ipynb            # Tool + TypeBox schema, the manual agent loop
-  05-structured-output.ipynb       # typed JSON via a forced tool + validateToolCall
-  06-vision-image-input.ipynb      # multimodal ImageContent input
-  07-reasoning-thinking.ipynb      # reasoning levels + ThinkingContent blocks
-  08-cost-caching-robustness.ipynb # calculateCost, cacheRetention, abort, retries
-  09-multiple-providers.ipynb      # unified API across several models/providers
-  10-agent-framework.ipynb         # @earendil-works/pi-agent-core Agent class
-  env.ts                           # walk-up .env loader
-  azure.ts                         # shared registerAzure() provider setup helper
-  deno.json                        # import map + npm deps for Deno
-  deno.lock                        # pinned dependency lockfile (committed)
-  .env.example                     # which API keys are supported
+  000-hello-typescript.ipynb        # simplest check: TypeScript runs in a notebook
+  010-hello-world.ipynb             # one LLM round-trip via pi-ai (Azure OpenAI)
+  020-streaming.ipynb               # streamSimple + iterating the event stream
+  030-multi-turn-chat.ipynb         # managing Context.messages history + running cost
+  040-tool-calling.ipynb            # Tool + TypeBox schema, the manual agent loop
+  050-structured-output.ipynb       # typed JSON via a forced tool + validateToolCall
+  060-vision-image-input.ipynb      # multimodal ImageContent input
+  070-reasoning-thinking.ipynb      # reasoning levels + ThinkingContent blocks
+  080-cost-caching-robustness.ipynb # calculateCost, cacheRetention, abort, retries
+  090-multiple-providers.ipynb      # unified API across several models/providers
+  100-agent-framework.ipynb         # @earendil-works/pi-agent-core Agent class
+  110-coding-agent.ipynb            # pi-agent-core coding agent: writes & runs Python
+  120-coding-agent-sdk.ipynb        # pi-coding-agent createAgentSession variant
+  env.ts                            # walk-up .env loader
+  azure.ts                          # shared registerAzure() provider setup helper
+  deno.json                         # import map + npm deps for Deno
+  deno.lock                         # pinned dependency lockfile (committed)
+  .env.example                      # which API keys are supported
 ```
 
-Notebooks **02 onward** are a progressive series: each loads env with `loadEnvUp()`
+Notebooks **020 onward** are a progressive series: each loads env with `loadEnvUp()`
 then registers Azure OpenAI in one call via `registerAzure()` (from `azure.ts`),
 so the notebook stays focused on the one pi feature it teaches. They all target the
-same `AZURE_PI_TEST_*` env vars as `01`.
+same `AZURE_PI_TEST_*` env vars as `010`. The two coding-agent notebooks (`110`,
+`120`) additionally use `AZURE_PI_TEST_DEPLOYMENT2` and run generated code inside a
+sandboxed `environment1/` subfolder.
 
 ---
 

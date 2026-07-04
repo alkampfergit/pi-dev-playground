@@ -6,10 +6,15 @@
     "@earendil-works/pi-agent-core": "npm:@earendil-works/pi-agent-core@^0.80.3",
     "@earendil-works/pi-agent-core/": "npm:/@earendil-works/pi-agent-core@^0.80.3/",
     "playground/env": "./env.ts",
-    "playground/azure": "./azure.ts"
+    "playground/azure": "./azure.ts",
+    "@earendil-works/pi-coding-agent": "npm:@earendil-works/pi-coding-agent@^0.80.3",
+    "@earendil-works/pi-coding-agent/": "npm:/@earendil-works/pi-coding-agent@^0.80.3/"
   },
   "allowScripts": {
     "allow": [],
-    "deny": ["npm:@google/genai@1.52.0", "npm:protobufjs@7.6.4"]
+    "deny": [
+      "npm:@google/genai@1.52.0",
+      "npm:protobufjs@7.6.4"
+    ]
   }
 }

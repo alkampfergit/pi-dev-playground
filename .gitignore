@@ -141,3 +141,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Coding-agent sandbox (notebooks 110/120): keep the folder, ignore generated files
+notebooks/environment1/*
+!notebooks/environment1/.gitkeep
