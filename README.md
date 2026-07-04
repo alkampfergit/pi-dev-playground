@@ -73,8 +73,9 @@ ANTHROPIC_API_KEY=sk-ant-...
 ```
 
 Cell 1 of each notebook calls `loadEnvUp()` (from `env.ts`), which **walks up the
-directory tree** from the notebook folder, finds the first `.env`, and loads its
-variables into the session. Anthropic uses **Haiku** (`claude-haiku-4-5`) in
+directory tree** from the notebook folder and loads **every** `.env` it finds,
+**closest-first** (a nearer `.env` wins on conflicts), printing the keys loaded from
+each. Anthropic uses **Haiku** (`claude-haiku-4-5`) in
 `01-hello-world.ipynb`; add `OPENAI_API_KEY` or `GEMINI_API_KEY` to use another provider.
 
 ### 5. Open a notebook and select the **Deno** kernel

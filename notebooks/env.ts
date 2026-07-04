@@ -1,26 +1,47 @@
 // env.ts — tiny dotenv loader for the Deno notebooks.
 //
-// Walks UP the directory tree from `startDir` (default: the kernel's current
-// working directory), loads the first `.env` it finds, and imports the values
-// into the session environment (`Deno.env`). This lets you keep API keys in a
-// `.env` file OUTSIDE the git repo — on disk, never committed.
+// Walks UP the directory tree from `startDir` (default: the directory of THIS
+// module, so it is independent of the kernel's working directory) and loads
+// EVERY `.env` it finds along the way — not just the first. This lets you keep
+// API keys in a `.env` OUTSIDE the git repo (on disk, never committed) and
+// optionally layer a repo-local `.env` on top.
+//
+// Files are loaded closest-first: a `.env` nearer the module wins over one
+// higher up (unless `override: true` is set). By default it also prints, for
+// each `.env` found, the names of the keys it loaded.
 //
 // Usage from a notebook cell:
-//   import { loadEnvUp } from "./env.ts";
+//   import { loadEnvUp } from "./env.ts";   // or "playground/env"
 //   await loadEnvUp();
 
+export interface FileLoad {
+  /** Absolute path of the `.env` file. */
+  path: string;
+  /** Names of the variables this file actually set. */
+  loaded: string[];
+  /** Names present in this file but skipped (already set by a closer file/env). */
+  skipped: string[];
+}
+
 export interface LoadResult {
-  /** Absolute path of the `.env` that was loaded, or null if none was found. */
-  path: string | null;
-  /** Names of the variables that were set. */
+  /** Every `.env` found, ordered closest-first. */
+  files: FileLoad[];
+  /** Union of all variable names that were set, across all files. */
   loaded: string[];
 }
 
 export interface LoadOptions {
-  /** Directory to start searching from. Defaults to `Deno.cwd()`. */
+  /**
+   * Directory to start searching from. Defaults to the directory of this
+   * module (`env.ts`), NOT `Deno.cwd()` — the Jupyter kernel's working
+   * directory is unreliable (VS Code often starts it outside the repo), so we
+   * anchor the walk-up to a known location inside the repo instead.
+   */
   startDir?: string;
   /** Overwrite variables already present in the environment. Defaults to false. */
   override?: boolean;
+  /** Print a per-file summary of the keys loaded. Defaults to true. */
+  log?: boolean;
 }
 
 /** Parse the contents of a `.env` file into key/value pairs. */
@@ -47,33 +68,58 @@ function parseEnv(text: string): Array<[string, string]> {
 }
 
 export async function loadEnvUp(options: LoadOptions = {}): Promise<LoadResult> {
-  const { startDir = Deno.cwd(), override = false } = options;
+  // Anchor the search to this module's own directory so it works no matter
+  // where the Jupyter kernel's cwd happens to be. Fall back to cwd only if the
+  // module directory is somehow unavailable (e.g. loaded from a remote URL).
+  const { startDir = import.meta.dirname ?? Deno.cwd(), override = false, log = true } = options;
 
+  // 1. Collect the absolute paths of every `.env` from `startDir` up to root.
+  const paths: string[] = [];
   let dir = startDir;
   while (true) {
     const candidate = `${dir}/.env`;
-    let text: string | null = null;
     try {
-      text = await Deno.readTextFile(candidate);
+      await Deno.stat(candidate);
+      paths.push(candidate);
     } catch {
-      // No `.env` in this directory — keep walking up.
+      // No `.env` in this directory.
     }
-
-    if (text !== null) {
-      const loaded: string[] = [];
-      for (const [key, val] of parseEnv(text)) {
-        if (!override && Deno.env.get(key) !== undefined) continue;
-        Deno.env.set(key, val);
-        loaded.push(key);
-      }
-      return { path: candidate, loaded };
-    }
-
     const parent = dir.slice(0, dir.lastIndexOf("/"));
-    if (!parent || parent === dir) {
-      // Reached the filesystem root without finding a `.env`.
-      return { path: null, loaded: [] };
-    }
+    if (!parent || parent === dir) break; // reached filesystem root
     dir = parent;
   }
+
+  // 2. Load them closest-first, so a nearer `.env` wins on conflicts.
+  const files: FileLoad[] = [];
+  const loadedAll = new Set<string>();
+  for (const path of paths) {
+    const text = await Deno.readTextFile(path);
+    const loaded: string[] = [];
+    const skipped: string[] = [];
+    for (const [key, val] of parseEnv(text)) {
+      // Skip if a closer file already set it (unless overriding).
+      if (!override && (loadedAll.has(key) || Deno.env.get(key) !== undefined)) {
+        skipped.push(key);
+        continue;
+      }
+      Deno.env.set(key, val);
+      loaded.push(key);
+      loadedAll.add(key);
+    }
+    files.push({ path, loaded, skipped });
+  }
+
+  if (log) {
+    if (files.length === 0) {
+      console.log("No .env found from", startDir, "up to the filesystem root.");
+    } else {
+      for (const f of files) {
+        const parts = [`${f.path} → ${f.loaded.length ? f.loaded.join(", ") : "(nothing new)"}`];
+        if (f.skipped.length) parts.push(`(skipped, already set: ${f.skipped.join(", ")})`);
+        console.log(parts.join(" "));
+      }
+    }
+  }
+
+  return { files, loaded: [...loadedAll] };
 }
