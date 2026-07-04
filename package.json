@@ -1,0 +1,17 @@
+{
+  "name": "pi-dev-playground",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A playground for exploring the pi.dev library to build AI agents",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@earendil-works/pi-ai": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "tslab": "latest"
+  }
+}
