@@ -1,6 +1,7 @@
 {
   "version": "5",
   "specifiers": {
+    "npm:@earendil-works/pi-agent-core@~0.80.3": "0.80.3_zod@4.4.3",
     "npm:@earendil-works/pi-ai@~0.80.3": "0.80.3_zod@4.4.3"
   },
   "npm": {
@@ -281,6 +282,15 @@
     "@babel/runtime@7.29.7": {
       "integrity": "sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw=="
     },
+    "@earendil-works/pi-agent-core@0.80.3_zod@4.4.3": {
+      "integrity": "sha512-3qw0/GeRQBU/nlGjDe5Yb7ePKTmoxefx2YxyKMFAviFUMXpFexBG/hS7mBtwFahFvzrrTPPoRT6sFIDjwoDWPQ==",
+      "dependencies": [
+        "@earendil-works/pi-ai",
+        "ignore",
+        "typebox",
+        "yaml"
+      ]
+    },
     "@earendil-works/pi-ai@0.80.3_zod@4.4.3": {
       "integrity": "sha512-jPZLMeGL5kkMSEAwAklfXTMHqZvfhsJtCCpKGIr5Duk7mc0n4skjB1dugk7y0z3z8ZHIUCmPAWHdyDqgUz5vdA==",
       "dependencies": [
@@ -529,6 +539,9 @@
         "debug"
       ]
     },
+    "ignore@7.0.5": {
+      "integrity": "sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg=="
+    },
     "json-bigint@1.0.0": {
       "integrity": "sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==",
       "dependencies": [
@@ -636,6 +649,10 @@
     "ws@8.21.0": {
       "integrity": "sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g=="
     },
+    "yaml@2.9.0": {
+      "integrity": "sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==",
+      "bin": true
+    },
     "zod-to-json-schema@3.25.2_zod@4.4.3": {
       "integrity": "sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA==",
       "dependencies": [
@@ -648,6 +665,7 @@
   },
   "workspace": {
     "dependencies": [
+      "npm:@earendil-works/pi-agent-core@~0.80.3",
       "npm:@earendil-works/pi-ai@~0.80.3"
     ]
   }
