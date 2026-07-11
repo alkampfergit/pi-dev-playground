@@ -33,3 +33,29 @@ It is loaded ad-hoc for a single session with `pi --extension ./wire-log.ts`,
 never installed permanently. Use it to see model, messages, tools, temperature,
 and cache markers exactly as they go over the wire. See the
 [sample README](../samples/002-wire-log/README.md).
+
+## 003 — Wire Log, auto-discovered
+
+Takes the sample 002 extension and lets pi discover it automatically instead of
+loading it ad-hoc with `-e`. The file lives in the sample's `extensions/` folder,
+which is pi's auto-discovery path `<config-dir>/extensions/`: because the sample's
+`prepare` scripts point `PI_CODING_AGENT_DIR` at the sample, that folder — not
+`~/.pi/agent/extensions/` — is where pi looks. (Copying it into
+`~/.pi/agent/extensions/` while `prepare` is sourced silently fails to load, since
+the config dir has been repointed.) Since an always-loaded logger should stay
+quiet, it defaults to off and registers a `/wire-log on|off|status` command via
+`pi.registerCommand()`. The command handler and the provider hooks share one
+in-memory `enabled` flag, so toggling logging takes effect on the next request
+with no `/reload`, and the extension creates nothing while off. See the
+[sample README](../samples/003-wire-log-global/README.md).
+
+## 004 — Extend and manage tools
+
+Provides two small Pi extensions: a structured `duckduckgo_instant_answer`
+lookup and a fuller `duckduckgo_search` that returns no-key DuckDuckGo HTML
+results. It then teaches two kinds of per-session tool
+control: CLI allow/deny lists (`--tools` and `--exclude-tools`) and runtime
+changes from an extension using `pi.setActiveTools()`. Its interactive commands
+make it easy to see `bash`, `edit`, and `write` disappear and return without
+changing the global Pi setup. See the
+[sample README](../samples/004-tools/README.md).

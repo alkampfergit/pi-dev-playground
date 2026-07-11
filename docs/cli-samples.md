@@ -35,6 +35,29 @@ session and records the provider request body plus response metadata. Use it to
 observe what Pi actually sends to the model without permanently installing an
 extension.
 
+## 3. Wire Log, auto-discovered
+
+Then move to [003 — Wire Log, auto-discovered](../samples/003-wire-log-global/README.md).
+It takes the same [wire-log extension](../samples/003-wire-log-global/extensions/wire-log.ts)
+and drops it into the sample's `extensions/` folder so pi loads it automatically
+— no `--extension` flag. The key lesson is that pi's auto-discovery path is
+`<config-dir>/extensions/`, and because the sample's `prepare` scripts point
+`PI_CODING_AGENT_DIR` at the sample, that path is the sample's own `extensions/`
+folder — not `~/.pi/agent/extensions/`. Because an always-loaded logger must stay
+out of the way, it defaults to off and adds a `/wire-log on|off|status` command
+that flips an in-memory flag the hooks read, teaching how `pi.registerCommand()`
+wires a runtime toggle with no restart.
+
+## 4. Extend and manage tools
+
+Next, use [004 — Extend and manage tools](../samples/004-tools/README.md). It
+offers two real tools registered with `pi.registerTool()`: a structured
+DuckDuckGo Instant Answer lookup and an HTML web-results search. The extensions
+introduce
+`pi.setActiveTools()`, showing how an interactive session can immediately
+remove built-ins such as `bash`, `edit`, and `write`. It also covers the CLI
+equivalents: `--tools` for an allowlist and `--exclude-tools` for a denylist.
+
 ## Next
 
 Move to the [notebooks](../notebooks/) for the SDK learning path: basic calls,
