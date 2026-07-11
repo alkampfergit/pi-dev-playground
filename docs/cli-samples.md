@@ -58,6 +58,15 @@ introduce
 remove built-ins such as `bash`, `edit`, and `write`. It also covers the CLI
 equivalents: `--tools` for an allowlist and `--exclude-tools` for a denylist.
 
+## 5. Project instructions and two simple skills
+
+Continue with [005 — Project instructions and one simple skill](../samples/005-context-and-skills/README.md).
+It contrasts automatic `AGENTS.md` context with an explicitly selected
+`SKILL.md`: the project instructions greet Gian Maria Ricci in the first
+response, while a haiku skill supplies a focused response procedure and a
+`encrypt` skill invokes bash and PowerShell ROT13 scripts. Run it once interactively and
+once with `-p` to see that the same skill works in both modes.
+
 ## Next
 
 Move to the [notebooks](../notebooks/) for the SDK learning path: basic calls,

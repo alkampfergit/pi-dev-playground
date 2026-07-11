@@ -15,9 +15,11 @@ the user asks for it.
 1. Locate the repository root and inspect only the relevant `AGENTS.md`,
    `docs/`, `wiki/`, sample `README.md` files, notebooks, changed files, and
    recent verification output. Preserve unrelated user changes.
-2. Extract durable learnings from the user's actual requests, corrections, and
-   verified results. Separate facts from assumptions. Never record API keys,
-   tokens, private URLs, or other secrets.
+2. Extract only durable, transferable learnings from the user's requests,
+   corrections, and verified results. A learning belongs in memory only when it
+   would help build, refactor, or troubleshoot a different sample or skill.
+   Separate facts from assumptions. Never record API keys, tokens, private
+   URLs, or other secrets.
 3. Apply progressive disclosure:
    - Keep `AGENTS.md` short: stable project rules, conventions, and links.
    - Keep `docs/` as the Pi course: concepts, learning order, and links to real
@@ -44,16 +46,22 @@ the user asks for it.
 
    ## YYYY-MM-DD — Short topic
 
+   - Reusable principles:
    - User preferences:
-   - Verified facts:
-   - Decisions and conventions:
-   - Pitfalls and fixes:
-   - Course/docs impact:
-   - Next useful step:
+   - Validation lessons:
+   - Documentation map:
    ```
 
-   Keep entries concise, factual, and linked to affected files. Merge
-   duplicates instead of repeating the same learning.
+   Keep entries concise, factual, and linked to affected files. Record the
+   principle, constraint, or decision—not the story of one implementation.
+   Merge duplicates instead of repeating the same learning.
+
+   Do **not** record sample numbers, exact commands, prompt/output examples,
+   session IDs, timestamps beyond the entry date, temporary alternatives,
+   implementation filenames, or incidental model/version details. Keep those
+   in the sample README, code comments, test output, or course page. Link to an
+   artifact only in `Documentation map` when it helps a future maintainer find
+   the source of truth.
 7. Update `wiki/samples.md` only when the sample's purpose, usage, or lesson
    changed. Do not copy the full sample README into the catalog.
 8. Validate with `git diff --check`, confirm referenced files exist, and run a

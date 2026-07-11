@@ -59,3 +59,12 @@ changes from an extension using `pi.setActiveTools()`. Its interactive commands
 make it easy to see `bash`, `edit`, and `write` disappear and return without
 changing the global Pi setup. See the
 [sample README](../samples/004-tools/README.md).
+
+## 005 — Project instructions and two simple skills
+
+Contrasts always-on project context with an explicit skill. The sample-local
+`AGENTS.md` identifies Gian Maria Ricci, requires a first-response greeting,
+and keeps the exercise read-only. Its tiny `haiku` skill works in both the
+interactive UI and one-shot `-p` mode, while `encrypt` shows a skill that
+invokes bash and PowerShell scripts. See the
+[sample README](../samples/005-context-and-skills/README.md).
