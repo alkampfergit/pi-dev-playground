@@ -35,7 +35,7 @@ It also registers three temporary slash commands:
 | Command | Effect |
 | --- | --- |
 | `/tools-show` | Shows the model-visible tool names. |
-| `/tools-readonly` | Replaces them with `read` and `duckduckgo_search`. `bash`, `edit`, and `write` are removed immediately. |
+| `/tools-readonly` | Replaces them with `read` and the selected DuckDuckGo search tool. `bash`, `edit`, and `write` are removed immediately. |
 | `/tools-restore` | Restores the tools that were active when this extension loaded, plus the search tool. |
 
 These commands call `pi.getActiveTools()` and `pi.setActiveTools()`. They

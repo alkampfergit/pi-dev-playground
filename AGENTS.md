@@ -59,3 +59,11 @@ sample and the [session memory](wiki/session-memory.md) for durable context.
 - Always try to run the sample before considering completed
 - Do not overengineer the sample, keep it simple and focused on the purpose of the sample
 - Add enought documentation to be instructive, the purpose is creating somethign that a developer uses to learn how to use pi.dev agents, it should have a teacher to student tone
+- Extensions: `PI_CODING_AGENT_DIR` overrides Pi's entire config directory
+  (default `~/.pi/agent`), and Pi auto-discovers extensions at
+  `<config-dir>/extensions/*.ts`. Because sourcing a sample's `prepare` sets
+  `PI_CODING_AGENT_DIR` to that sample, an auto-loaded extension for a sample
+  belongs in that sample's own `extensions/` folder — not `~/.pi/agent/extensions/`.
+  A truly machine-wide extension requires the default config dir, so it is
+  incompatible with the per-sample `prepare` workflow. Use `pi -e ./file.ts` only
+  for one-off ad-hoc loads.
