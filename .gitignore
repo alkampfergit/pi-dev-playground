@@ -13,7 +13,9 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 bin
 sessions/
-
+dump/
+auth.json
+session-stats.md
 
 # Runtime data
 pids

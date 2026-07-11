@@ -24,3 +24,13 @@ OpenClaw’s own Pi integration page appears to document a Pi-heavy development 
 4. Then use [pi-extension-template](https://pi.dev/packages/pi-extension-template) as your scaffold. [pi](https://pi.dev/packages/pi-extension-template)
 
 If you want, I can turn this into a concrete reading path for a TypeScript developer: “build a minimal OpenClaw-style harness in 90 minutes.”
+
+## This repository's course
+
+The repository also contains runnable learning artifacts. Use the
+[001 Hello World sample](../samples/001-helloworld/README.md) for the first
+interactive CLI exercise, then follow the [CLI samples course](cli-samples.md)
+before moving to the progressive TypeScript experiments in the
+[notebooks](../notebooks/). The notebooks are the executable examples; the
+documents in this directory explain the concepts and point to those artifacts
+rather than duplicating their code.

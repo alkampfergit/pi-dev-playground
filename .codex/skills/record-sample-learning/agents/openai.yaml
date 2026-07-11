@@ -1,0 +1,4 @@
+interface:
+  display_name: "Record Sample Learning"
+  short_description: "Capture verified sample learnings"
+  default_prompt: "Use $record-sample-learning to capture verified learnings and update the Pi course docs."
