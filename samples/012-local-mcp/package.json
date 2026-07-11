@@ -1,0 +1,16 @@
+{
+  "name": "pi-sample-012-local-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify:mcp": "tsx ./verify/verify-mcp.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "tsx": "4.23.0"
+  }
+}

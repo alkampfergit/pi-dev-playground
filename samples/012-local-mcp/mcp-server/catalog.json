@@ -1,0 +1,32 @@
+[
+  {
+    "id": "001",
+    "title": "Hello World",
+    "lesson": "Run Pi interactively and non-interactively with the shared Azure model configuration.",
+    "path": "samples/001-helloworld"
+  },
+  {
+    "id": "002",
+    "title": "Wire Log",
+    "lesson": "Observe provider requests and responses with an extension loaded for one run.",
+    "path": "samples/002-wire-log"
+  },
+  {
+    "id": "003",
+    "title": "Wire Log, auto-discovered",
+    "lesson": "Load a config-directory extension automatically and toggle it at runtime.",
+    "path": "samples/003-wire-log-global"
+  },
+  {
+    "id": "004",
+    "title": "Extend and manage tools",
+    "lesson": "Register custom tools and control the active tool set from the CLI and an extension.",
+    "path": "samples/004-tools"
+  },
+  {
+    "id": "005",
+    "title": "Project instructions and two simple skills",
+    "lesson": "Contrast always-on project context with explicit reusable skills.",
+    "path": "samples/005-context-and-skills"
+  }
+]

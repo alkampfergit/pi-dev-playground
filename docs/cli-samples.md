@@ -67,6 +67,57 @@ response, while a haiku skill supplies a focused response procedure and a
 `encrypt` skill invokes bash and PowerShell ROT13 scripts. Run it once interactively and
 once with `-p` to see that the same skill works in both modes.
 
+## 6. Gate individual tool calls
+
+Use [006 — Guardrails](../samples/006-guardrails/README.md) to move from choosing
+which tools exist to deciding whether one particular invocation may run. Its
+auto-discovered extension protects sensitive paths, asks for confirmation for
+recognizable destructive commands in the TUI, and fails closed when no UI is
+available. Observe that a blocked call becomes a model-visible error result.
+
+## 7. Hand a conversation to another model
+
+[007 — Two models](../samples/007-two-models/README.md) keeps one session alive
+while switching between the two configured Azure deployments. The `/handoff`
+command uses the model registry and `pi.setModel()`; the wire-log exercise proves
+that the next request changes model without discarding earlier messages.
+
+## 8. Automate Pi headlessly
+
+[008 — Headless automation](../samples/008-headless-automation/README.md) turns
+print and JSON modes into a PowerShell batch workflow. It covers piped input,
+fixed read-only tools, exit handling, output validation, and session-free runs.
+Use it as the bridge from interactive CLI work to process integration.
+
+## 9. Package and share resources
+
+[009 — Package and share](../samples/009-package-and-share/README.md) bundles an
+extension and a skill into a local Pi package. Its verifier installs, discovers,
+lists, removes, and negatively rechecks the package inside an isolated config
+directory without calling a model or altering shared settings.
+
+## 10. Manage the session lifecycle
+
+[010 — Session lifecycle](../samples/010-session-lifecycle/README.md) teaches
+named sessions, continuation, exact reopening, selection, forking, and ephemeral
+runs. Its metadata-only helper avoids printing prompts or absolute paths, while
+the verifier proves fork provenance and original-session immutability.
+
+## 11. Reuse task entry points
+
+[011 — Prompt templates](../samples/011-prompt-templates/README.md) adds a fixed
+planning command and a parameterized review command. It contrasts templates with
+always-on project context, skills, and extension commands, then verifies the
+expanded user messages rather than relying on model wording.
+
+## 12. Bridge a local MCP server
+
+[012 — Local MCP](../samples/012-local-mcp/README.md) is explicit that Pi 0.80.6
+has no built-in MCP client. A small extension owns a local stdio MCP process and
+maps one reviewed, read-only catalog capability into a Pi tool. The sample tests
+the server contract, healthy and degraded lifecycle paths, and a real grounded
+tool call.
+
 ## Next
 
 Move to the [notebooks](../notebooks/) for the SDK learning path: basic calls,

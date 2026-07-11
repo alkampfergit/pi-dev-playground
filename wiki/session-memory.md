@@ -1,5 +1,39 @@
 # Session Memory
 
+## 2026-07-11 — Operating, distributing, and integrating CLI agents
+
+- Reusable principles:
+  - Separate capability selection from per-call authorization. Headless policy
+    paths should fail closed, and denials should be returned as model-visible
+    tool results.
+  - Model switching can preserve conversation history; verify both the next
+    provider request and the session's model-change record.
+  - Test automation structurally: validate process status, event shape, output
+    schema, capability policy, and persistence behavior instead of judging prose.
+  - Install and remove packages inside an isolated configuration, restore the
+    caller's environment, and prove negative discovery after removal.
+  - Treat saved conversations as sensitive data. Lifecycle helpers should expose
+    only the metadata needed for the lesson.
+  - When a protocol is not built in, make the adapter and process boundary
+    explicit and test both healthy and degraded lifecycle paths.
+- User preferences:
+  - Expand sample designs before implementation and use separate workers for
+    design and verified implementation when samples are independent.
+  - Keep advanced topics in focused standalone samples with real runnable
+    verification rather than combining them into a showcase application.
+- Validation lessons:
+  - Prefer model-free RPC or direct-contract checks for discovery and lifecycle
+    behavior; reserve live model calls for behavior that truly crosses the model
+    boundary.
+  - Use bounded retries only for nondeterministic model-format failures, never
+    to hide process failures or weaken acceptance checks.
+  - Keep dependencies pinned where a sample owns a separate protocol process,
+    and verify clean installation from the lockfile.
+- Documentation map:
+  - [CLI course](../docs/cli-samples.md), [sample catalog](samples.md), and the
+    [design briefs](../docs/planned-samples/README.md) link to each runnable
+    sample and its detailed acceptance criteria.
+
 ## 2026-07-11 — Skills, context, and extensions
 
 - Reusable principles:

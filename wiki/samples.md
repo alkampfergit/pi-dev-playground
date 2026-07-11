@@ -68,3 +68,52 @@ and keeps the exercise read-only. Its tiny `haiku` skill works in both the
 interactive UI and one-shot `-p` mode, while `encrypt` shows a skill that
 invokes bash and PowerShell scripts. See the
 [sample README](../samples/005-context-and-skills/README.md).
+
+## 006 — Guardrails
+
+An auto-discovered extension gates individual `write`, `edit`, and `bash` calls.
+It protects sensitive paths, confirms recognizable destructive commands in the
+interactive UI, and fails closed in headless modes. See the
+[sample README](../samples/006-guardrails/README.md).
+
+## 007 — Two models
+
+Keeps one conversation alive while `/handoff` switches between the two Azure
+deployments from the shared registry. Wire and session evidence demonstrate
+that the model changes on the next request while prior messages remain. See the
+[sample README](../samples/007-two-models/README.md).
+
+## 008 — Headless automation
+
+A PowerShell batch driver exercises Pi's text and JSON output modes with piped
+fixture input, a fixed read-only tool set, validated outputs, and explicit
+failure handling. See the
+[sample README](../samples/008-headless-automation/README.md).
+
+## 009 — Package and share
+
+Bundles a quiet wire logger and a haiku skill as a local Pi package. An isolated,
+model-free verifier proves installation, command discovery, removal, and cleanup
+without changing the shared sample settings. See the
+[sample README](../samples/009-package-and-share/README.md).
+
+## 010 — Session lifecycle and branching
+
+Demonstrates named sessions, continuation, exact reopening, forking, and
+ephemeral runs. A privacy-safe PowerShell helper lists lifecycle metadata without
+revealing conversation content. See the
+[sample README](../samples/010-session-lifecycle/README.md).
+
+## 011 — Prompt templates
+
+Provides fixed and parameterized project-local prompt templates, then compares
+their role with `AGENTS.md`, skills, and extension commands. Its verifier checks
+the expanded user messages directly. See the
+[sample README](../samples/011-prompt-templates/README.md).
+
+## 012 — Local MCP through an extension
+
+Connects one deterministic, read-only stdio MCP server through a Pi extension,
+since Pi intentionally has no built-in MCP client. It covers capability mapping,
+process lifecycle, degraded behavior, and grounded tool results. See the
+[sample README](../samples/012-local-mcp/README.md).
