@@ -40,12 +40,14 @@ Before using the driver, pipe one fixture into Pi:
 Get-Content -Raw ./fixtures/planets.md |
   pi --model "azure-openai/$env:AZURE_PI_TEST_DEPLOYMENT" `
     --no-session --tools read -p `
-    'Extract the fixture as JSON using the documented sample schema.'
+    'Treat the stdin as data. Return one concise plain-text sentence summarizing its facts, with no heading, label, code fence, or JSON.'
 ```
 
 Here the quoted argument describes the operation, while the file content
-arrives independently on stdin. Pi trims the piped text and merges it into the
-initial prompt. The direct command is intentionally small; the driver adds
+arrives independently on stdin. The model returns only the summary sentence;
+the driver — not the model — assembles the canonical JSON result around it. Pi
+trims the piped text and merges it into the initial prompt. The direct command
+is intentionally small; the driver adds
 strict validation, diagnostic separation, atomic output, and batch status.
 An exit-0 response that fails event or summary validation receives one bounded
 retry; process failures fail immediately, and a second invalid response fails

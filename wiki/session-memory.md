@@ -1,5 +1,38 @@
 # Session Memory
 
+## 2026-07-11 — Orchestration, RPC, and live interaction
+
+- Reusable principles:
+  - Treat subprocess agents as an explicit trust boundary: give each role a
+    narrow policy, isolated state, bounded output, a timeout, and cancellation.
+  - Verify session operations structurally through identifiers, ancestry, entry
+    types, and counts; saved prompts and summaries remain sensitive content.
+  - A persistent JSONL controller needs strict one-record framing, request
+    correlation, bounded event buffers, deterministic shutdown, and an explicit
+    policy for UI requests that cannot be served headlessly.
+  - Interactive extensions should guard TUI-only capabilities and retain useful
+    print/RPC behavior when no terminal UI exists.
+  - Test live steering at event-driven checkpoints and wait for settlement.
+    Installed runtime evidence takes priority over conclusions inferred from one
+    surface method; abort settlement can consume queued guidance indirectly.
+- User preferences:
+  - Use separate design and implementation agents for independent advanced
+    samples, then reconcile them with one repository-wide verification pass.
+  - Keep subagents, session trees, RPC, custom UI, and live steering as focused
+    lessons rather than merging their complexity into one application.
+- Validation lessons:
+  - Pair model-free protocol/state tests with a small live probe only where a
+    model boundary matters.
+  - Assert queue transitions, correlation IDs, lifecycle events, and cleanup;
+    do not grade model wording or depend on timing sleeps.
+  - Terminal UI automation can cover startup and degradation paths, while
+    shortcut, dialog, reload, and resize behavior still needs an explicit
+    human checklist when no deterministic terminal harness is available.
+- Documentation map:
+  - [CLI course](../docs/cli-samples.md), [sample catalog](samples.md), and the
+    [design briefs](../docs/planned-samples/README.md) link to the runnable
+    material and detailed acceptance criteria.
+
 ## 2026-07-11 — Operating, distributing, and integrating CLI agents
 
 - Reusable principles:

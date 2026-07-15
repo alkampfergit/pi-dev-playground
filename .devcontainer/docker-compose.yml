@@ -1,0 +1,66 @@
+services:
+  workspace:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity
+    environment:
+      # Bootstrap value only. After you generate a real virtual key in the
+      # litellm UI (see .devcontainer/README.md), override this — e.g.
+      # `export LITELLM_MASTER_KEY=sk-...` in your shell, or drop it into any
+      # .env outside the repo that the samples' prepare scripts already walk
+      # up to find. No real provider secret ever lives in this container.
+      LITELLM_MASTER_KEY: sk-devcontainer-local
+    depends_on:
+      litellm:
+        condition: service_healthy
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    restart: unless-stopped
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    volumes:
+      - ./litellm/config.yaml:/app/config.yaml:ro
+    environment:
+      # Bootstrap-only, local-network-only values — not real provider
+      # secrets. LITELLM_MASTER_KEY logs into the admin UI as user "admin".
+      # LITELLM_SALT_KEY encrypts credentials litellm stores in Postgres; it
+      # must stay stable across restarts or stored models become unreadable.
+      LITELLM_MASTER_KEY: sk-devcontainer-local
+      LITELLM_SALT_KEY: sk-devcontainer-local-salt
+      DATABASE_URL: postgresql://litellm:litellm@db:5432/litellm
+      STORE_MODEL_IN_DB: "True"
+    ports:
+      # Published so you can open the admin UI from the host at
+      # http://localhost:4000/ui and reach it from the workspace container
+      # at http://litellm:4000.
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/health/liveliness"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: litellm
+      POSTGRES_PASSWORD: litellm
+      POSTGRES_DB: litellm
+    volumes:
+      - litellm-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U litellm -d litellm"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  litellm-db-data:

@@ -1,0 +1,25 @@
+{
+  "name": "pi-dev-playground",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "workspace",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+
+  "forwardPorts": [4000],
+  "portsAttributes": {
+    "4000": {
+      "label": "litellm proxy",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-vscode.powershell", "denoland.vscode-deno"]
+    }
+  },
+
+  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+
+  "remoteUser": "node"
+}

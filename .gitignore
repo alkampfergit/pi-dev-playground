@@ -16,6 +16,7 @@ sessions/
 dump/
 auth.json
 session-stats.md
+output/
 
 # Runtime data
 pids

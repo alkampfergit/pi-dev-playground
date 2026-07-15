@@ -15,6 +15,12 @@ From inside a sample, dot-source `. ./prepare.ps1` in PowerShell or run
 `source ./prepare.sh` in Bash. The scripts load the nearest `.env` values and
 set `PI_CODING_AGENT_DIR` to the current sample directory.
 
+Prefer not to keep a real Azure API key in your working container? Use the
+[devcontainer setup](../.devcontainer/README.md): it runs a litellm proxy in a
+sidecar container that holds the real credential, while the workspace
+container where Pi and the samples run only sees the proxy. Pick the
+`litellm` provider instead of `azure-openai` for the same model IDs.
+
 ## 1. Hello World
 
 Start with [001 — Hello World](../samples/001-helloworld/README.md). It teaches
@@ -118,7 +124,45 @@ maps one reviewed, read-only catalog capability into a Pi tool. The sample tests
 the server contract, healthy and degraded lifecycle paths, and a real grounded
 tool call.
 
+## 13. Delegate bounded work to subagents
+
+[013 — Subagents](../samples/013-subagents/README.md) introduces an
+auto-discovered extension that launches isolated Pi child processes for focused
+roles. It teaches explicit agent policy, bounded output, timeouts, cancellation,
+and the difference between delegation and an in-process tool call.
+
+## 14. Inspect session trees and compact safely
+
+[014 — Session trees and compaction](../samples/014-tree-and-compaction/README.md)
+turns branching, cloning, forking, and compaction into a structural exercise.
+The verifier checks parentage and summaries without exposing saved conversation
+content. It also makes an important boundary visible: RPC can inspect the tree,
+while an interactive extension uses `ctx.navigateTree()` to navigate it.
+
+## 15. Control a long-lived Pi RPC process
+
+[015 — RPC controller](../samples/015-rpc-controller/README.md) wraps Pi's JSONL
+RPC mode in a reusable PowerShell module. It covers framing, request correlation,
+streaming events, steering, follow-ups, aborts, process cleanup, and fail-closed
+handling for UI requests in a headless controller.
+
+## 16. Build a small custom TUI
+
+[016 — Custom TUI](../samples/016-custom-tui/README.md) demonstrates a focused
+interactive extension with keyboard shortcuts, dialogs, status updates, reload
+behavior, and terminal resizing. The same extension degrades cleanly in print
+and RPC modes, where interactive UI capabilities are unavailable.
+
+## 17. Steer a running agent
+
+[017 — Live steering](../samples/017-live-steering/README.md) compares immediate
+steering, follow-up messages, next-turn extension messages, and persistent
+custom entries. Its event-driven verifier observes delivery and settlement,
+including Pi 0.80.6's measured two-pending-to-zero transition after abort.
+
 ## Next
 
-Move to the [notebooks](../notebooks/) for the SDK learning path: basic calls,
+The CLI course now covers the major extension, orchestration, persistence, RPC,
+and interaction surfaces. Continue experimenting by combining policies from
+these focused samples, or move to the [notebooks](../notebooks/) for the SDK learning path: basic calls,
 streaming, tools, structured output, providers, and coding-agent APIs.

@@ -1,0 +1,15 @@
+# LiteLLM proxy configuration for the pi-dev-playground devcontainer.
+#
+# Intentionally empty of models and credentials: with store_model_in_db
+# enabled (STORE_MODEL_IN_DB=True on the litellm service), you add the real
+# Azure AI Foundry endpoint/key and model(s) from the admin UI at
+# http://localhost:4000/ui instead. See ../README.md for the step-by-step.
+#
+# Name the model(s) you add in the UI `cohere-command-a` and/or `Kimi-K2.5`
+# to match the `litellm` provider entry in ../../samples/models.json.
+
+general_settings:
+  store_model_in_db: true
+
+litellm_settings:
+  drop_params: true

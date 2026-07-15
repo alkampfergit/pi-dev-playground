@@ -117,3 +117,36 @@ Connects one deterministic, read-only stdio MCP server through a Pi extension,
 since Pi intentionally has no built-in MCP client. It covers capability mapping,
 process lifecycle, degraded behavior, and grounded tool results. See the
 [sample README](../samples/012-local-mcp/README.md).
+
+## 013 — Subagents and delegated work
+
+Launches isolated Pi child processes behind a bounded extension tool. The
+sample teaches role-specific instructions, tool restrictions, timeouts,
+cancellation, output limits, and safe aggregation. See the
+[sample README](../samples/013-subagents/README.md).
+
+## 014 — Session trees, fork, clone, and compaction
+
+Builds and verifies a real session tree, compacts a branch, reloads it, clones
+it, and forks it while keeping inspection output privacy-safe. See the
+[sample README](../samples/014-tree-and-compaction/README.md).
+
+## 015 — Long-lived RPC controller
+
+Provides a reusable PowerShell JSONL controller for one persistent Pi RPC
+process, including correlation, streaming, steering, follow-ups, aborts,
+cleanup, and headless UI policy. See the
+[sample README](../samples/015-rpc-controller/README.md).
+
+## 016 — Small custom TUI
+
+Adds a compact interactive panel, shortcuts, dialogs, status updates, reload,
+and resize behavior while preserving clean print and RPC fallbacks. See the
+[sample README](../samples/016-custom-tui/README.md).
+
+## 017 — Live steering and follow-ups
+
+Contrasts immediate steering, queued follow-ups, next-turn messages, and
+persistent custom entries. Its verifier uses lifecycle events and queue state
+instead of model prose to prove delivery, settlement, and abort behavior. See
+the [sample README](../samples/017-live-steering/README.md).
