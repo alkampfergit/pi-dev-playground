@@ -42,7 +42,9 @@ devcontainer up --workspace-folder .
 
 ## 2. Log into the litellm admin UI
 
-Open `http://localhost:4000/ui` (port 4000 is published to the host).
+Open `http://localhost:4000/ui`. Port 4000 isn't published by Docker Compose
+(so it won't conflict with anything else on your host); it reaches you via
+VS Code's own port forwarding, declared in `devcontainer.json`.
 
 - Username: `admin`
 - Password: `sk-devcontainer-local` (the `LITELLM_MASTER_KEY` above)
@@ -100,7 +102,8 @@ Interactively, run `pi` and pick a `litellm/...` entry from `/model`.
   startup and upstream request errors.
 - `docker compose -f .devcontainer/docker-compose.yml logs db` — Postgres
   issues.
-- `curl http://localhost:4000/health/liveliness` from the host, or
+- `curl http://localhost:4000/health/liveliness` from the host (works via VS
+  Code's forwarded port once the devcontainer is running), or
   `wget -qO- http://litellm:4000/health/liveliness` from inside the
   workspace container.
 - Getting 401s from `pi`: the model/key was probably added in the UI under a
