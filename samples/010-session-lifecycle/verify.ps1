@@ -213,6 +213,7 @@ function Invoke-PiTurn {
 
 $requiredEnvironment = @('AZURE_PI_TEST_DEPLOYMENT', 'AZURE_PI_TEST_API_KEY', 'PI_CODING_AGENT_DIR')
 if ($null -eq (Get-Command pi -ErrorAction SilentlyContinue)) { throw "Required command 'pi' was not found." }
+if ($null -eq (Get-Command bash -ErrorAction SilentlyContinue)) { throw "Required command 'bash' was not found." }
 foreach ($name in $requiredEnvironment) {
     if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
         throw "Required environment variable '$name' is missing. Source ./prepare.ps1 first."
@@ -313,11 +314,22 @@ try {
     Assert-True (@($metadata | Where-Object { $_.Id -eq $originalId -and $_.Name -eq 'lifecycle-original' -and -not $_.IsFork }).Count -eq 1) 'Original metadata is incorrect.'
     Assert-True (@($metadata | Where-Object { $_.Id -eq $forkId -and $_.Name -eq 'lifecycle-alternative' -and $_.IsFork -and $_.ParentId -eq $originalId }).Count -eq 1) 'Fork metadata is incorrect.'
 
+    $bashJsonOutput = (& bash (Join-Path $PSScriptRoot 'list-sessions.sh') --sessions-directory $script:VerificationDirectory --format json 2>&1 | Out-String)
+    Assert-True ($LASTEXITCODE -eq 0) 'Bash metadata helper failed in JSON mode.'
+    $bashMetadata = @($bashJsonOutput | ConvertFrom-Json -Depth 20)
+    Assert-True ($bashMetadata.Count -eq 2) 'Bash metadata helper did not return the two expected sessions.'
+    Assert-True (@($bashMetadata | Where-Object { $_.Id -eq $originalId -and $_.Name -eq 'lifecycle-original' -and -not $_.IsFork }).Count -eq 1) 'Bash original metadata is incorrect.'
+    Assert-True (@($bashMetadata | Where-Object { $_.Id -eq $forkId -and $_.Name -eq 'lifecycle-alternative' -and $_.IsFork -and $_.ParentId -eq $originalId }).Count -eq 1) 'Bash fork metadata is incorrect.'
+
     $tableOutput = (& pwsh (Join-Path $PSScriptRoot 'list-sessions.ps1') -SessionsDirectory $script:VerificationDirectory -Format Table 2>&1 | Out-String)
     Assert-True ($LASTEXITCODE -eq 0) 'Metadata helper failed in table mode.'
+    $bashTableOutput = (& bash (Join-Path $PSScriptRoot 'list-sessions.sh') --sessions-directory $script:VerificationDirectory --format table 2>&1 | Out-String)
+    Assert-True ($LASTEXITCODE -eq 0) 'Bash metadata helper failed in table mode.'
     foreach ($forbidden in @('ORBIT-41', 'COMET-73', $apiKey, $sampleDirectory, $originalPath)) {
         Assert-True (-not $jsonOutput.Contains($forbidden, [StringComparison]::Ordinal)) 'JSON metadata output exposed forbidden content or an absolute path.'
         Assert-True (-not $tableOutput.Contains($forbidden, [StringComparison]::Ordinal)) 'Table metadata output exposed forbidden content or an absolute path.'
+        Assert-True (-not $bashJsonOutput.Contains($forbidden, [StringComparison]::Ordinal)) 'Bash JSON metadata output exposed forbidden content or an absolute path.'
+        Assert-True (-not $bashTableOutput.Contains($forbidden, [StringComparison]::Ordinal)) 'Bash table metadata output exposed forbidden content or an absolute path.'
     }
 
     $freshDirectory = Join-Path $script:VerificationDirectory 'empty-continue'
@@ -339,7 +351,7 @@ try {
     Assert-SuccessfulAssistantMarker $fresh 'FRESH-CONTINUE'
     Assert-True (-not $fresh.RawText.Contains($apiKey, [StringComparison]::Ordinal)) 'API key found in fresh continue session text.'
 
-    Write-Host 'PASS: named start, continue, exact reopen, fork, ephemeral mode, metadata privacy, and empty-directory continue.'
+    Write-Host 'PASS: named start, continue, exact reopen, fork, ephemeral mode, PowerShell and Bash metadata privacy, and empty-directory continue.'
 }
 finally {
     if (Test-Path -LiteralPath $script:VerificationDirectory) {

@@ -24,8 +24,9 @@ By the end, you will know when to use each session entry point:
 - `--fork <full-id>` copies existing history into a new, related file; and
 - `--no-session` keeps the current Pi conversation in memory only.
 
-You will use `list-sessions.ps1` to inspect only safe lifecycle metadata. The
-helper never prints prompts, assistant responses, tool data, or absolute paths.
+You will use `list-sessions.ps1` or `list-sessions.sh` to inspect only safe
+lifecycle metadata. Both helpers never print prompts, assistant responses,
+tool data, or absolute paths.
 
 ## Prerequisites and setup
 
@@ -40,9 +41,16 @@ $model = "azure-openai/$env:AZURE_PI_TEST_DEPLOYMENT"
 New-Item -Path $sessionDir -ItemType Directory -Force | Out-Null
 ```
 
-The preparation script must be dot-sourced so its environment changes remain
-in your shell. In bash, use `source ./prepare.sh` and then switch to `pwsh` for
-the walkthrough commands.
+The preparation script must be sourced so its environment changes remain in
+your shell. A Bash-only setup is:
+
+```bash
+source ./prepare.sh
+pi --version
+session_dir="$PWD/sessions/lifecycle-lab"
+model="azure-openai/$AZURE_PI_TEST_DEPLOYMENT"
+mkdir -p "$session_dir"
+```
 
 `--session-dir` isolates this lab from your other Pi sessions and makes the
 exercise reproducible. It changes where Pi stores and searches for JSONL files;
@@ -71,6 +79,18 @@ pwsh ./list-sessions.ps1
 $sessions = pwsh ./list-sessions.ps1 -Format Json | ConvertFrom-Json
 $originalId = $sessions[0].Id
 $originalId
+```
+
+The equivalent Bash inspection commands are:
+
+```bash
+./list-sessions.sh
+original_id="$(./list-sessions.sh --format json | node -e '
+  let input = "";
+  process.stdin.on("data", chunk => input += chunk);
+  process.stdin.on("end", () => console.log(JSON.parse(input)[0].Id));
+')"
+printf '%s\n' "$original_id"
 ```
 
 There should be one session named `lifecycle-original`. Pi's version-3 JSONL
@@ -261,7 +281,8 @@ it. Avoid commands that print the live JSONL into a terminal transcript.
 
 ## Files in this sample
 
-- `list-sessions.ps1` reports lifecycle metadata in table or JSON format.
+- `list-sessions.ps1` and `list-sessions.sh` report the same lifecycle
+  metadata in table or JSON format.
 - `verify.ps1` performs the real-model acceptance checks.
 - `models.json`, `settings.json`, `prepare.ps1`, and `prepare.sh` are symlinks
   to the shared files at the `samples` root.

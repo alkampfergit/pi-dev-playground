@@ -9,6 +9,29 @@ Packaging changes the distribution mechanism, not the extension's runtime
 design. The logger still starts disabled, creates `dump/` lazily, and records
 only provider requests and responses while enabled.
 
+## The Pi functionality this sample explains
+
+Pi packages are a way to distribute a small, named collection of Pi resources
+as one unit. A package is an ordinary directory (or an npm or Git source) with
+a `package.json` manifest. Its `pi` section tells Pi which extension files,
+skills, prompts, and themes it contributes.
+
+When you run `pi install <source>`, Pi records that package source in the
+active configuration's `settings.json`. It does not merge the extension into
+your configuration or turn the skill into a copy owned by Pi. Each new Pi
+process reads the installed package list, reads the manifest, and discovers the
+declared resources. In this sample that discovery makes two things available:
+
+- `/wire-log`, an extension command that can record provider traffic when you
+  enable it;
+- `/skill:haiku`, a skill whose instructions Pi can apply when you invoke it.
+
+`pi remove <source>` removes the package reference. A Pi process that starts
+afterwards no longer discovers either resource. This install → startup
+discovery → removal cycle is the underlying functionality that the verifier
+tests. The package is only a distribution and discovery mechanism; extensions
+remain executable code and skills remain instruction files.
+
 ## Two roots with different jobs
 
 The outer `009-package-and-share/` directory is the **sample root**. Its README,
@@ -143,6 +166,65 @@ finally {
 
 The automated verifier adds stricter exit-code assertions and sentinel-based
 cleanup; prefer it when you want a repeatable pass/fail result.
+
+## Equivalent manual Bash flow (no script)
+
+The following is the same experiment expressed entirely as Bash commands. Paste
+it into a Bash terminal from the sample directory; it creates an isolated Pi
+configuration, so it does not change the shared `samples/settings.json`. It
+uses no helper or verifier script.
+
+```bash
+cd samples/009-package-and-share
+
+set -euo pipefail
+start_dir="$(pwd -P)"
+package_dir="$(cd package && pwd -P)"
+scratch="$(mktemp -d "${TMPDIR:-/tmp}/pi-package-demo.XXXXXX")"
+agent_dir="$scratch/agent"
+work_dir="$scratch/work"
+
+# Preserve the terminal's variables and remove only this temporary directory.
+had_agent_dir=0
+had_offline=0
+if [ "${PI_CODING_AGENT_DIR+x}" = x ]; then
+  had_agent_dir=1
+  old_agent_dir="$PI_CODING_AGENT_DIR"
+fi
+if [ "${PI_OFFLINE+x}" = x ]; then
+  had_offline=1
+  old_offline="$PI_OFFLINE"
+fi
+cleanup() {
+  cd "$start_dir"
+  if [ "$had_agent_dir" -eq 1 ]; then export PI_CODING_AGENT_DIR="$old_agent_dir"; else unset PI_CODING_AGENT_DIR; fi
+  if [ "$had_offline" -eq 1 ]; then export PI_OFFLINE="$old_offline"; else unset PI_OFFLINE; fi
+  rm -rf "$scratch"
+}
+trap cleanup EXIT
+
+mkdir -p "$agent_dir" "$work_dir"
+export PI_CODING_AGENT_DIR="$agent_dir"
+export PI_OFFLINE=1
+cd "$work_dir"
+
+# Install the local package, then inspect the resources discovered at startup.
+pi install "$package_dir" --no-approve
+pi list --no-approve
+printf '%s\n' '{"id":"commands","type":"get_commands"}' |
+  pi --mode rpc --no-session --offline --no-approve
+
+# Start a new Pi process after removal: wire-log and skill:haiku are gone.
+pi remove "$package_dir" --no-approve
+pi list --no-approve
+printf '%s\n' '{"id":"commands-after-remove","type":"get_commands"}' |
+  pi --mode rpc --no-session --offline --no-approve
+```
+
+In the first RPC response, look for commands named `wire-log` (source
+`extension`) and `skill:haiku` (source `skill`). In the second response they
+are absent. The `trap` restores your environment and deletes the disposable
+directory as soon as the pasted sequence finishes or fails.
 
 ## Optional interactive exploration
 
