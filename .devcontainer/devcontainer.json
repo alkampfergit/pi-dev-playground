@@ -15,7 +15,10 @@
 
   "customizations": {
     "vscode": {
-      "extensions": ["ms-vscode.powershell", "denoland.vscode-deno"]
+      "extensions": ["ms-vscode.powershell", "denoland.vscode-deno"],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      }
     }
   },
 

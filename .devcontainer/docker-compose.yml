@@ -22,6 +22,12 @@ services:
     image: ghcr.io/berriai/litellm:main-stable
     restart: unless-stopped
     command: ["--config", "/app/config.yaml", "--port", "4000"]
+    ports:
+      # Published so the admin UI/API is reachable straight from the host at
+      # http://localhost:9940, without going through VS Code's port
+      # forwarding. Host port 9940 (not 4000) so it won't collide with
+      # anything else already listening on 4000 on your machine.
+      - "9940:4000"
     volumes:
       - ./litellm/config.yaml:/app/config.yaml:ro
     environment:

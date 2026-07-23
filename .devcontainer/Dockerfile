@@ -17,4 +17,9 @@ RUN curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh
 # Pi coding agent CLI used by every sample under samples/.
 RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 
+# Oh My Zsh ships in this base image already; swap its default "devcontainers"
+# theme for the classic robbyrussell one, which shows the git branch/dirty
+# state out of the box (no extra git config needed).
+RUN sed -i 's/^ZSH_THEME=.*/ZSH_THEME="robbyrussell"/' /home/node/.zshrc
+
 USER node
