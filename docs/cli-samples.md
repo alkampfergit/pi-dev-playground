@@ -160,9 +160,27 @@ steering, follow-up messages, next-turn extension messages, and persistent
 custom entries. Its event-driven verifier observes delivery and settlement,
 including Pi 0.80.6's measured two-pending-to-zero transition after abort.
 
+## 18. Route models inside the harness
+
+[018 — Intent router](../samples/018-intent-router/README.md) registers
+`intent/auto` as a native Pi virtual model and uses local Jeff inference to
+choose between two configured physical models. It covers sticky tool
+continuations, retry state, bounded context, explicit fallback, and the
+important distinction between router-policy tests and measured classifier
+quality. The accompanying
+[five-minute demo](../samples/018-intent-router/DEMO.md) shows why model
+selection here is harness customization rather than prompt engineering. A
+task-specific Jeff adapter must be installed before claiming its real accuracy;
+the sample documents that training boundary instead of treating a different
+Jeff adapter as an equivalent classifier.
+
+Continue by combining policies from these focused samples, or move to the
+[notebooks](../notebooks/) for the SDK learning path: basic calls, streaming,
+tools, structured output, providers, and coding-agent APIs.
+
 ## Next
 
-The CLI course now covers the major extension, orchestration, persistence, RPC,
-and interaction surfaces. Continue experimenting by combining policies from
-these focused samples, or move to the [notebooks](../notebooks/) for the SDK learning path: basic calls,
-streaming, tools, structured output, providers, and coding-agent APIs.
+The CLI course now includes native virtual-model routing and local decision
+classification alongside the extension, orchestration, persistence, RPC, and
+interaction lessons. Continue experimenting by combining these policies, or
+move to the [notebooks](../notebooks/) for the SDK learning path.

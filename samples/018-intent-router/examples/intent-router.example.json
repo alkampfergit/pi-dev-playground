@@ -1,0 +1,23 @@
+{
+  "models": {
+    "coding": { "provider": "anthropic", "model": "YOUR_CODING_MODEL_ID" },
+    "general": { "provider": "openai", "model": "YOUR_GENERAL_MODEL_ID" }
+  },
+  "classifier": { "confidenceThreshold": 0.8, "timeoutMs": 3000 },
+  "routing": {
+    "fallback": "coding",
+    "stickyContinuations": true,
+    "includeConversationContext": true,
+    "failoverOnProviderError": false
+  },
+  "observability": { "enabled": true, "logPromptContents": false },
+  "jeff": {
+    "adapter": "intent-code-general-v1",
+    "functionId": "jeff.intent_router.code_general",
+    "context": { "application": "Choose the Pi destination model from user intent." },
+    "labels": {
+      "code": "Software engineering work requiring code creation, editing, debugging, testing, refactoring, repository inspection, or implementation.",
+      "general": "General knowledge, explanations, summaries, discussion, research, or conversation."
+    }
+  }
+}

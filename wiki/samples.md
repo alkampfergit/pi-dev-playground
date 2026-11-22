@@ -150,3 +150,14 @@ Contrasts immediate steering, queued follow-ups, next-turn messages, and
 persistent custom entries. Its verifier uses lifecycle events and queue state
 instead of model prose to prove delivery, settlement, and abort behavior. See
 the [sample README](../samples/017-live-steering/README.md).
+
+## 018 — Intelligent model routing
+
+Registers `intent/auto` as a Pi virtual model and routes new user turns between
+configured physical models using a persistent local Jeff process. It teaches
+branch-local routing state, bounded context, sticky continuations, explicit
+fallback, and the difference between deterministic router tests and real
+classifier evaluation. A task-specific Jeff adapter must be trained and
+installed before its accuracy can be claimed. See the
+[sample README](../samples/018-intent-router/README.md) and
+[five-minute demo](../samples/018-intent-router/DEMO.md).

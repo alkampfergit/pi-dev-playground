@@ -1,0 +1,20 @@
+{"text":"Write a C# function that validates JWTs.","expected":"code"}
+{"text":"Explain the history of OAuth.","expected":"general"}
+{"text":"Implement unit tests for this class.","expected":"code"}
+{"text":"Explain the difference between OAuth and OIDC.","expected":"general"}
+{"text":"Refactor this method to use async/await.","expected":"code"}
+{"text":"Summarize this article.","expected":"general"}
+{"text":"Fix the failing compilation.","expected":"code"}
+{"text":"What is the capital of France?","expected":"general"}
+{"text":"Now add error handling.","expected":"code","context":["Implement a C# JWT authentication middleware."]}
+{"text":"Explain why you implemented it this way.","expected":"general","context":["Implement a C# JWT authentication middleware."]}
+{"text":"Inspect this repository and identify the broken test.","expected":"code"}
+{"text":"Give me a short summary of this news story.","expected":"general"}
+{"text":"Add cancellation token support.","expected":"code","context":["Implement an async C# HTTP client method."]}
+{"text":"Tell me how DNS resolution works.","expected":"general"}
+{"text":"Please update the README examples to match the new CLI.","expected":"code"}
+{"text":"What are the tradeoffs between city and rural living?","expected":"general"}
+{"text":"Run the tests and fix any regression you find.","expected":"code"}
+{"text":"Translate this paragraph into Italian.","expected":"general"}
+{"text":"Can you review this pull request for a race condition?","expected":"code"}
+{"text":"Why do leaves change color in autumn?","expected":"general"}

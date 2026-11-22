@@ -1,5 +1,33 @@
 # Session Memory
 
+## 2026-11-21 — Native model routing and local classification
+
+- Reusable principles:
+  - A Pi virtual model can route to configured physical catalog entries while
+    Pi retains destination-provider authentication, streaming, and agent-loop
+    behavior. Preserve the physical model on tool continuations and retries.
+  - Verify extension facade types against the installed package: the extension
+    virtual-model callback may receive `ctx` even when the lower-level runtime
+    callback does not.
+  - A local decision-model engine is not automatically a task classifier.
+    Match the adapter's documented decision menu to the intended task, and
+    measure a task-specific adapter on held-out data before claiming quality.
+  - Keep deterministic router-policy tests separate from local model accuracy
+    evaluation; do not interpret mocks as inference evidence.
+- User preferences:
+  - For advanced samples, use a separate Sol subagent for independent API and
+    feasibility research when the user asks for delegation.
+- Validation lessons:
+  - Assert native virtual-model discovery offline without provider credentials;
+    exercise routing logic with mock model registries and classifiers.
+  - Bound classifier input, keep prompts out of logs, and make timeout,
+    abstention, and invalid output follow explicit deterministic fallback rules.
+- Documentation map:
+  - [Sample 018](../samples/018-intent-router/README.md),
+    [demo](../samples/018-intent-router/DEMO.md),
+    [course page](../docs/cli-samples.md), and
+    [design brief](../docs/planned-samples/018-intent-router.md).
+
 ## 2026-07-11 — Orchestration, RPC, and live interaction
 
 - Reusable principles:

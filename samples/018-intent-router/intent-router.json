@@ -1,0 +1,33 @@
+{
+  "models": {
+    "coding": { "provider": "azure-openai", "model": "cohere-command-a" },
+    "general": { "provider": "azure-openai", "model": "Kimi-K2.5" }
+  },
+  "classifier": {
+    "engine": "gliner",
+    "modelPath": "models/gliner-multitask-large-v0.5",
+    "confidenceThreshold": 0.35,
+    "marginThreshold": 0.03,
+    "timeoutMs": 30000,
+    "labels": {
+      "code": "software engineering work such as creating or editing source code, implementing features, debugging, testing, refactoring, or inspecting a software repository",
+      "general": "general knowledge, explanations, summaries, research, discussion, advice, or conversation that does not ask for software engineering work"
+    }
+  },
+  "routing": {
+    "fallback": "coding",
+    "stickyContinuations": true,
+    "includeConversationContext": true,
+    "failoverOnProviderError": false
+  },
+  "observability": { "enabled": true, "logPromptContents": false },
+  "jeff": {
+    "adapter": "intent-code-general-v1",
+    "functionId": "jeff.intent_router.code_general",
+    "context": { "application": "Choose the Pi destination model from user intent." },
+    "labels": {
+      "code": "Software engineering work requiring code creation, editing, debugging, testing, refactoring, repository inspection, or implementation.",
+      "general": "General knowledge, explanations, summaries, discussion, research, or conversation."
+    }
+  }
+}

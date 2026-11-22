@@ -1,0 +1,9 @@
+/auth.json
+/models-store.json
+/sessions/
+/.venv/
+/.uv-cache/
+/.hf-home/
+/models/gliner-multitask-large-v0.5/
+__pycache__/
+*.py[cod]

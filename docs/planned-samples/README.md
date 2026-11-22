@@ -3,7 +3,7 @@
 These detailed design briefs cover the CLI course after [005 — Project
 instructions and two simple
 skills](../../samples/005-context-and-skills/README.md). Briefs 006–012 guided
-the runnable implementations; briefs 013–017 guided the second advanced track.
+the runnable implementations; briefs 013–018 guided the advanced track.
 The sample READMEs are the source of truth for commands and current behavior;
 these files preserve scope, implementation decisions, edge cases, verification
 matrices, and acceptance criteria.
@@ -29,10 +29,11 @@ interactive extension behavior:
 3. [015 — Pi as a long-lived RPC service](015-rpc-controller.md)
 4. [016 — A small custom TUI extension](016-custom-tui.md)
 5. [017 — Live steering, follow-ups, and extension messages](017-live-steering.md)
+6. [018 — Route requests with a Pi virtual model and local Jeff](018-intent-router.md)
 
-Samples 013–015 are the recommended continuation. Samples 016–017 are optional
-advanced UI and interaction lessons. All should remain small, standalone
-samples rather than one large showcase application.
+Samples 013–015 are the recommended continuation. Samples 016–018 are optional
+advanced interaction, UI, and harness-routing lessons. All should remain small,
+standalone samples rather than one large showcase application.
 
 ## Runnable implementations
 
@@ -48,6 +49,7 @@ samples rather than one large showcase application.
 - [015](../../samples/015-rpc-controller/README.md)
 - [016](../../samples/016-custom-tui/README.md)
 - [017](../../samples/017-live-steering/README.md)
+- [018](../../samples/018-intent-router/README.md)
 
 ## Why completed design briefs remain here
 
