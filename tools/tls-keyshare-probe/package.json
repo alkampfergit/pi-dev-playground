@@ -1,0 +1,8 @@
+{
+  "name": "tls-keyshare-probe",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "probe": "node probe.mjs"
+  }
+}

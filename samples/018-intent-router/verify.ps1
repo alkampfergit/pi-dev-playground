@@ -17,7 +17,7 @@ try {
     $env:PI_OFFLINE = '1'
     $models = & pi --offline --list-models 'intent/auto' 2>&1 | Out-String
     if ($LASTEXITCODE -ne 0 -or $models -notmatch '(?m)^intent\s+auto\b') { throw "Pi did not register intent/auto. Output: $models" }
-    Write-Host 'PASS: policy tests and Pi 1.6 virtual model discovery; no credentials, Jeff weights, or provider calls used.'
+    Write-Host 'PASS: policy tests and Pi 1.6 virtual model discovery; no credentials, classifier weights, or provider calls used.'
 } finally {
     $env:PI_CODING_AGENT_DIR = $oldAgentDir
     $env:PI_OFFLINE = $oldOffline

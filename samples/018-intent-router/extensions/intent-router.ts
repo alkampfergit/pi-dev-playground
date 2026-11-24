@@ -2,13 +2,13 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type { ModelThinkingLevel } from "@earendil-works/pi-ai";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { JeffLocalClassifier } from "../lib/jeff-client.ts";
+import { LocalClassifierProcess } from "../lib/classifier-client.ts";
 import { routeRequest, type RouterConfig, type RouteRequest, type RouteResult, type RouterState } from "../lib/router.ts";
 
 const PROVIDER = "intent";
 const VIRTUAL_ID = "auto";
 interface Config extends RouterConfig {
-	classifier: RouterConfig["classifier"] & { engine: "gliner" | "jeff"; modelPath?: string; labels?: { code: string; general: string } };
+	classifier: RouterConfig["classifier"] & { engine: "gliner2" | "jeff"; modelPath?: string; labels?: { code: string; general: string } };
 	jeff: { adapter: string; functionId: string; context?: Record<string, unknown>; labels?: Record<string, string> };
 }
 interface RawConfig extends Omit<Config, "models"> {
@@ -21,8 +21,8 @@ function loadConfig(sampleDir: string): Config {
 	if (!config.models?.coding?.provider || !config.models.coding.model || !config.models?.general?.provider || !config.models.general.model) throw new Error("intent-router.json must configure coding and general models.");
 	if (!Number.isFinite(config.classifier?.timeoutMs) || config.classifier.timeoutMs < 1 || !Number.isFinite(config.classifier?.confidenceThreshold) || config.classifier.confidenceThreshold < 0 || config.classifier.confidenceThreshold > 1) throw new Error("Invalid classifier timeout or confidence threshold.");
 	if (!(config.routing?.fallback === "coding" || config.routing?.fallback === "general")) throw new Error("routing.fallback must be coding or general.");
-	if (config.classifier.engine !== "gliner" && config.classifier.engine !== "jeff") throw new Error("classifier.engine must be gliner or jeff.");
-	if (config.classifier.engine === "gliner" && (!config.classifier.modelPath || !config.classifier.labels?.code || !config.classifier.labels?.general)) throw new Error("GLiNER requires a local modelPath and code/general labels.");
+	if (config.classifier.engine !== "gliner2" && config.classifier.engine !== "jeff") throw new Error("classifier.engine must be gliner2 or jeff.");
+	if (config.classifier.engine === "gliner2" && (!config.classifier.modelPath || !config.classifier.labels?.code || !config.classifier.labels?.general)) throw new Error("GLiNER2 requires a local modelPath and code/general labels.");
 	if (config.classifier.engine === "jeff" && (!config.jeff?.adapter || !config.jeff?.functionId)) throw new Error("Configure a local Jeff adapter and functionId.");
 	return { ...config, models: {
 		coding: { provider: config.models.coding.provider, id: config.models.coding.model },
@@ -33,7 +33,7 @@ function loadConfig(sampleDir: string): Config {
 export default function intentRouter(pi: ExtensionAPI): void {
 	const sampleDir = process.env.PI_CODING_AGENT_DIR ?? process.cwd();
 	const config = loadConfig(sampleDir);
-	const classifier = new JeffLocalClassifier(sampleDir, { ...config.classifier, jeff: config.jeff });
+	const classifier = new LocalClassifierProcess(sampleDir, { ...config.classifier, jeff: config.jeff });
 	let latest: RouterState | undefined;
 	let totals = { requests: 0, fallbacks: 0, latencyMs: 0 };
 
@@ -51,7 +51,8 @@ export default function intentRouter(pi: ExtensionAPI): void {
 				totals.requests++;
 				totals.latencyMs += result.decision.latencyMs;
 				if (result.decision.fallback) totals.fallbacks++;
-				if (config.observability.enabled && ctx.hasUI) ctx.ui.notify(`[Intent Router]\nIntent: ${result.decision.intent.toUpperCase()}${result.decision.confidence === undefined ? "" : `\nConfidence: ${Math.round(result.decision.confidence * 100)}%`}\nSelected: ${result.model.provider}/${result.model.id}\nDecision time: ${result.decision.latencyMs.toFixed(1)} ms\nReason: ${result.decision.reason}`, "info");
+					const scoreLabel = config.classifier.engine === "gliner2" ? "Score" : "Confidence";
+					if (config.observability.enabled && ctx.hasUI) ctx.ui.notify(`[Intent Router]\nIntent: ${result.decision.intent.toUpperCase()}${result.decision.confidence === undefined ? "" : `\n${scoreLabel}: ${Math.round(result.decision.confidence * 100)}%`}\nSelected: ${result.model.provider}/${result.model.id}\nDecision time: ${result.decision.latencyMs.toFixed(1)} ms\nReason: ${result.decision.reason}`, "info");
 			}
 			const model = ctx.modelRegistry.find(result.model.provider, result.model.id);
 			if (!model || model.api === "pi-virtual" || !ctx.modelRegistry.getAvailable().some((candidate) => candidate.provider === result.model.provider && candidate.id === result.model.id && candidate.api !== "pi-virtual")) throw new Error(`Configured physical model is unavailable: ${result.model.provider}/${result.model.id}`);

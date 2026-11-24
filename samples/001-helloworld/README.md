@@ -166,6 +166,33 @@ are reported separately as input, output, cache read, cache write, and total
 tokens. The cost columns contain the matching input, output, cache read, cache
 write, and total values recorded by Pi.
 
+## Diagnose Azure connectivity
+
+`test-azure-loop.sh` exercises the installed Pi CLI and its own provider client,
+using this sample's `models.json` and the same Pi authentication path as a normal
+run. It disables context files, skills, extensions, and MCP so those resources
+cannot affect the diagnostic. Each request writes Pi's JSONL events and Node's
+network/TLS trace to a temporary directory printed by the script.
+
+```bash
+source ./prepare.sh
+./test-azure-loop.sh
+```
+
+Set `PI_AZURE_LOOP_REQUESTS=5` to shorten the run, or
+`PI_AZURE_LOOP_MODEL=Kimi-K2.5` to choose another model ID registered in
+`models.json`. The default model is the first model in that file. The test sends
+20 separate Pi requests with the prompt
+`Rispondi solo OK.`. A successful final Pi response can still show
+`ECONNRESET` occurrences from failed attempts that Pi recovered from; the
+summary reports both the final request result and the reset count.
+
+`test-azure-curl-loop.sh` preserves the original direct-`curl` test as a control.
+Set `PI_AZURE_LOOP_MODEL` to the same model ID for both scripts before comparing
+results: the `.env` deployment may differ from the IDs in `models.json`. The
+`curl` script has its own retry loop, so compare its `Retry totali` with the Pi
+test's `ECONNRESET` count when diagnosing intermittent connection failures.
+
 ## `models.json`
 
 The committed [`models.json`](./models.json) registers both current Azure AI

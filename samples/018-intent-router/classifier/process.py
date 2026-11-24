@@ -1,4 +1,4 @@
-"""Persistent JSON-lines bridge to local GLiNER or Jeff inference."""
+"""Persistent JSON-lines bridge to local GLiNER2 or Jeff inference."""
 import json
 import sys
 import time
@@ -10,25 +10,29 @@ def main() -> None:
     jeff_key = None
     gliner_classifier = None
     gliner_key = None
+    gliner_schema = None
     for line in sys.stdin:
         try:
             request = json.loads(line)
             config = request["config"]
             engine = config["engine"]
             start = time.perf_counter()
-            if engine == "gliner":
+            if engine == "gliner2":
                 key = json.dumps({"modelPath": config["modelPath"], "labels": config["labels"]}, sort_keys=True)
                 if gliner_classifier is None or gliner_key != key:
-                    from gliner import GLiNER
-                    from gliner.multitask import GLiNERClassifier
-
-                    # The model has already been downloaded by setup-local-classifier.ps1.
-                    # Offline flags plus local_files_only ensure inference cannot reach a Hub.
                     import os
                     os.environ["HF_HUB_OFFLINE"] = "1"
-                    model = GLiNER.from_pretrained(config["modelPath"], local_files_only=True,
-                                                   map_location="cpu", dtype="float16")
-                    gliner_classifier = GLiNERClassifier(model=model)
+                    from gliner2 import AutoExtractor
+
+                    # The model has already been downloaded by setup-local-classifier.sh.
+                    # Offline flags plus local_files_only ensure inference cannot reach a Hub.
+                    gliner_classifier = AutoExtractor.from_pretrained(config["modelPath"],
+                                                                      local_files_only=True,
+                                                                      map_location="cpu")
+                    labels = config["labels"]
+                    gliner_schema = gliner_classifier.create_schema().classification(
+                        "intent", [labels["code"], labels["general"]],
+                        multi_label=False, cls_threshold=0.0)
                     gliner_key = key
                 inputs = request["input"]
                 context = inputs.get("previousUserTurns", [])
@@ -37,20 +41,16 @@ def main() -> None:
                 if inputs.get("lastIntent"):
                     parts.append(f"The preceding request was classified as: {inputs['lastIntent']}.")
                 text = "\n".join(parts)[:6000]
+                predictions = gliner_classifier.extract(text, gliner_schema, include_confidence=True)
+                classification = predictions.get("intent", {})
+                label = classification.get("label") if isinstance(classification, dict) else classification
+                confidence = classification.get("confidence") if isinstance(classification, dict) else None
                 labels = config["labels"]
-                predictions = gliner_classifier(text, classes=[labels["code"], labels["general"]],
-                                                multi_label=True, threshold=0.0)
-                candidates = predictions[0] if predictions else []
                 label_to_intent = {labels["code"]: "code", labels["general"]: "general"}
-                candidates = [item for item in candidates if item.get("label") in label_to_intent and isinstance(item.get("score"), (int, float))]
-                if not candidates:
-                    raise ValueError("GLiNER returned no recognized intent label")
-                best = max(candidates, key=lambda item: item["score"])
-                intent = label_to_intent[best["label"]]
-                confidence = float(best["score"])
-                runner_up = max((float(item["score"]) for item in candidates if item is not best), default=0.0)
-                if confidence - runner_up < float(config.get("marginThreshold", 0.0)):
-                    confidence = 0.0
+                if label not in label_to_intent or not isinstance(confidence, (int, float)):
+                    raise ValueError("GLiNER2 returned no recognized intent label")
+                intent = label_to_intent[label]
+                confidence = float(confidence)
             elif engine == "jeff":
                 jeff_config = config["jeff"]
                 key = json.dumps(jeff_config, sort_keys=True)

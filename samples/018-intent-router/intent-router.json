@@ -4,14 +4,13 @@
     "general": { "provider": "azure-openai", "model": "Kimi-K2.5" }
   },
   "classifier": {
-    "engine": "gliner",
-    "modelPath": "models/gliner-multitask-large-v0.5",
+    "engine": "gliner2",
+    "modelPath": "models/gliner2.5-base-v1",
     "confidenceThreshold": 0.35,
-    "marginThreshold": 0.03,
     "timeoutMs": 30000,
     "labels": {
-      "code": "software engineering work such as creating or editing source code, implementing features, debugging, testing, refactoring, or inspecting a software repository",
-      "general": "general knowledge, explanations, summaries, research, discussion, advice, or conversation that does not ask for software engineering work"
+      "code": "software development and programming tasks: write or edit code, implement features, debug errors, run tests, refactor or inspect a software repository",
+      "general": "general information, explanations, summaries, research, discussion, advice or translation requests"
     }
   },
   "routing": {

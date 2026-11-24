@@ -1,4 +1,24 @@
-# 018 — Route requests with a Pi virtual model and local Jeff
+# 018 — Route requests with a Pi virtual model and local classification
+
+## Shipped implementation update — 2026-11-22
+
+The runnable sample now defaults to local GLiNER2.5
+(`fastino/gliner2.5-base-v1`) through the official GLiNER2 single-label
+classification schema. The Python process is created from the sample's own
+`.venv`, and `setup-local-classifier.sh` keeps downloaded weights and caches in
+gitignored sample directories. This Mac-first workflow follows the user's
+request for a local classifier and shell setup.
+
+The original GLiNER multitask classification wrapper was tested and rejected:
+the installed package returned extracted text spans instead of the requested
+intent labels. GLiNER2.5 returned a typed class and score on the installed Mac.
+The latest real sample evaluation measured 19/20 (95%) accuracy and 555.7 ms mean
+decision latency on the small labeled set; this is educational evidence, not
+production quality. Jeff remains an
+optional backend for a task-specific local adapter, and Jeff accuracy is not
+claimed or included in the GLiNER2.5 result. The design below preserves the
+original Jeff-oriented scope and failure requirements; the sample README is
+the source of truth for the shipped default and commands.
 
 ## Status and compatibility target
 
@@ -32,8 +52,9 @@ accuracy remains unverified until a learner installs the resulting adapter and
 runs the opt-in integration evaluation. Before that, real route requests take
 the configured fallback after the local function reports that it is unavailable.
 
-The current upstream Node SDK source is not published as an npm package. The
-sample uses Jeff's supported Python local SDK in one persistent child process,
+Jeff publishes the `jeff-sdk` npm package, but the shipped sample has not
+validated the SDK's local Node integration. Its optional Jeff mode uses the
+supported Python local SDK in one persistent child process,
 with JSON-lines IPC and no network endpoint. Only the classifier child receives
 the bounded prompt/context; no provider key is passed. Jeff local runtime setup
 requires uv and supported hardware. Adapter training requires an NVIDIA GPU per
@@ -87,11 +108,11 @@ samples/018-intent-router/
 ├── DEMO.md
 ├── examples/intent-router.example.json
 ├── extensions/intent-router.ts
-├── lib/{router,context,jeff-client}.ts
-├── jeff/classifier.py
+├── lib/{router,context,classifier-client}.ts
+├── classifier/process.py
 ├── evaluation/intents.jsonl
 ├── tests/{router.test,integration.test}.ts
-├── verify.ps1
+├── setup-local-classifier.sh, verify.sh
 └── models.json, settings.json, prepare.ps1, prepare.sh -> shared files
 ```
 

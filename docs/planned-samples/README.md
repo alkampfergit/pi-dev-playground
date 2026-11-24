@@ -29,7 +29,7 @@ interactive extension behavior:
 3. [015 — Pi as a long-lived RPC service](015-rpc-controller.md)
 4. [016 — A small custom TUI extension](016-custom-tui.md)
 5. [017 — Live steering, follow-ups, and extension messages](017-live-steering.md)
-6. [018 — Route requests with a Pi virtual model and local Jeff](018-intent-router.md)
+6. [018 — Route requests with a Pi virtual model and local classifier](018-intent-router.md)
 
 Samples 013–015 are the recommended continuation. Samples 016–018 are optional
 advanced interaction, UI, and harness-routing lessons. All should remain small,

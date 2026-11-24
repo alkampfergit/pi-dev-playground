@@ -64,8 +64,8 @@ export async function routeRequest(
 	const classifierStarted = performance.now();
 	try {
 		result = await classifyWithTimeout(classifier, input, config.classifier.timeoutMs, request.signal);
-		if (!isClassificationResult(result)) throw new Error("Jeff returned an invalid classification.");
-		if (result.confidence < config.classifier.confidenceThreshold) throw new Error("Jeff classification was below the confidence threshold.");
+		if (!isClassificationResult(result)) throw new Error("Classifier returned an invalid decision.");
+		if (result.confidence < config.classifier.confidenceThreshold) throw new Error("Classifier score was below the configured threshold.");
 	} catch (error) {
 		if (request.signal?.aborted) throw new Error("Routing request was aborted.");
 		result = { intent: config.routing.fallback === "coding" ? "code" : "general", confidence: 0, latencyMs: performance.now() - classifierStarted };

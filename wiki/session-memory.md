@@ -1,5 +1,25 @@
 # Session Memory
 
+## 2026-11-22 — Sample 018 local classifier and macOS workflow
+
+- Sample 018 defaults to GLiNER2.5 (`fastino/gliner2.5-base-v1`) because its
+  local `AutoExtractor` API supports fixed-label classification with scores.
+  The earlier GLiNER multitask pipeline returned detected text spans rather
+  than the required class labels; verify outputs from the installed package,
+  even when its current documentation shows a plausible example.
+- With concise labels in `intent-router.json`, local evaluation measured
+  19/20 (95%) accuracy and 555.7 ms mean decision latency. The 20-row sample is
+  educational evidence, not a production quality guarantee.
+- Keep classifier setup Mac-friendly: `setup-local-classifier.sh` creates
+  `.venv/`, Hugging Face cache, and weights inside the sample; gitignore all
+  generated files there. Keep the sample's normal shared `prepare.sh` symlink.
+- Report measured local evaluation rather than implying a small dataset proves
+  production routing quality. Jeff remains an optional backend; its adapter
+  accuracy is not established by GLiNER evaluation.
+- Validation: the Bash verifier can test Pi virtual-model discovery and router
+  mechanics on macOS without PowerShell or model weights. The opt-in Python
+  evaluation exercises the actual local model.
+
 ## 2026-11-21 — Native model routing and local classification
 
 - Reusable principles:

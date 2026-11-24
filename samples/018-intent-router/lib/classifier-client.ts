@@ -4,7 +4,7 @@ import { createInterface } from "node:readline";
 import type { Classifier, ClassificationInput, ClassificationResult } from "./router.ts";
 
 interface JeffConfig {
-	engine: "gliner" | "jeff";
+	engine: "gliner2" | "jeff";
 	modelPath?: string;
 	labels?: { code: string; general: string };
 	confidenceThreshold: number;
@@ -13,8 +13,8 @@ interface JeffConfig {
 }
 interface Pending { resolve(value: ClassificationResult): void; reject(error: Error): void; }
 
-/** One JSONL child per extension lifetime; Jeff's local model is initialized once and reused. */
-export class JeffLocalClassifier implements Classifier {
+/** One JSONL child per extension lifetime; the selected local model is initialized once and reused. */
+export class LocalClassifierProcess implements Classifier {
 	private child?: ChildProcessWithoutNullStreams;
 	private nextId = 1;
 	private readonly pending = new Map<number, Pending>();
@@ -31,7 +31,7 @@ export class JeffLocalClassifier implements Classifier {
 			options.signal?.addEventListener("abort", abort, { once: true });
 			this.pending.set(id, { resolve: (value) => { options.signal?.removeEventListener("abort", abort); resolve(value); }, reject: (error) => { options.signal?.removeEventListener("abort", abort); reject(error); } });
 			this.child!.stdin.write(`${JSON.stringify({ id, input, config: this.config })}\n`, (error) => {
-				if (error) { const entry = this.pending.get(id); this.pending.delete(id); entry?.reject(new Error("Could not send request to local Jeff.")); }
+				if (error) { const entry = this.pending.get(id); this.pending.delete(id); entry?.reject(new Error("Could not send request to the local classifier.")); }
 			});
 		});
 	}
@@ -45,7 +45,7 @@ export class JeffLocalClassifier implements Classifier {
 			forceStop.unref();
 			child.once("exit", () => clearTimeout(forceStop));
 		}
-		for (const pending of this.pending.values()) pending.reject(new Error("Local Jeff process stopped."));
+			for (const pending of this.pending.values()) pending.reject(new Error("Local classifier process stopped."));
 		this.pending.clear();
 	}
 
@@ -54,8 +54,9 @@ export class JeffLocalClassifier implements Classifier {
 		if (this.startError) throw this.startError;
 			const venvPython = process.platform === "win32" ? `${this.sampleDir}/.venv/Scripts/python.exe` : `${this.sampleDir}/.venv/bin/python`;
 			const python = process.env.LOCAL_CLASSIFIER_PYTHON ?? process.env.JEFF_PYTHON ?? (existsSync(venvPython) ? venvPython : "python3");
-		const script = `${this.sampleDir}/jeff/classifier.py`;
-		const env: NodeJS.ProcessEnv = { PATH: process.env.PATH, HOME: process.env.HOME, TMPDIR: process.env.TMPDIR, LANG: process.env.LANG };
+			const script = `${this.sampleDir}/classifier/process.py`;
+			const env: NodeJS.ProcessEnv = { PATH: process.env.PATH, HOME: process.env.HOME, TMPDIR: process.env.TMPDIR, LANG: process.env.LANG,
+				...(this.config.engine === "gliner2" ? { HF_HUB_OFFLINE: "1" } : {}) };
 		const child = spawn(python, [script], { cwd: this.sampleDir, env, stdio: ["pipe", "pipe", "pipe"] });
 		this.child = child;
 		const lines = createInterface({ input: child.stdout });
@@ -66,13 +67,13 @@ export class JeffLocalClassifier implements Classifier {
 			const pending = this.pending.get(message.id);
 			if (!pending) return;
 			this.pending.delete(message.id);
-			if (message.error) pending.reject(new Error("Local Jeff returned an error."));
+			if (message.error) pending.reject(new Error("Local classifier returned an error."));
 			else if (message.result) pending.resolve(message.result);
-			else pending.reject(new Error("Local Jeff returned an invalid response."));
+			else pending.reject(new Error("Local classifier returned an invalid response."));
 		});
-		child.stderr.on("data", () => { /* Jeff diagnostics can contain input; never forward them. */ });
-		child.on("error", () => { this.startError = new Error("Could not start the configured local Jeff Python runtime."); this.failPending(this.startError); });
-		child.on("exit", () => { if (this.child === child) this.child = undefined; this.failPending(new Error("Local Jeff process exited.")); });
+			child.stderr.on("data", () => { /* Classifier diagnostics can contain input; never forward them. */ });
+			child.on("error", () => { this.startError = new Error("Could not start the configured local classifier Python runtime."); this.failPending(this.startError); });
+			child.on("exit", () => { if (this.child === child) this.child = undefined; this.failPending(new Error("Local classifier process exited.")); });
 	}
 
 	private failPending(error: Error): void {
